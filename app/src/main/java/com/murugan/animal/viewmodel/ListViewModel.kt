@@ -3,6 +3,10 @@ package com.murugan.animal.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.murugan.animal.di.AppModule
+import com.murugan.animal.di.CONTEXT_APP
+import com.murugan.animal.di.DaggerListViewModelComponent
+import com.murugan.animal.di.TypeOfQualifier
 import com.murugan.animal.model.Animal
 import com.murugan.animal.model.AnimalApiService
 import com.murugan.animal.model.ApiKey
@@ -11,6 +15,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
+
 
 class ListViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,11 +25,26 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     val loading by lazy { MutableLiveData<Boolean>() }
 
     private var disposable = CompositeDisposable()
-    private val apiService = AnimalApiService()
-    private val pref = SharedPreferencesHelper(getApplication())
+
+    @Inject
+    lateinit var apiService: AnimalApiService
+
+    @Inject
+    @field:TypeOfQualifier(CONTEXT_APP)
+    lateinit var pref: SharedPreferencesHelper
 
     private var invalidApiKey = false
 
+    init {
+        // DaggerListViewModelComponent.create().inject(this)
+        DaggerListViewModelComponent
+            .builder()
+            .appModule(AppModule(getApplication()))
+            .build()
+            .inject(this)
+
+
+    }
 
     fun refresh() {
         if (animal.value == null) {
@@ -55,6 +76,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
                                 loading.value = false
                                 loadError.value = true
                             } else {
+                                pref.saveApiKey(apiKey.key)
                                 getAnimal(apiKey.key)
                             }
                         }
@@ -76,6 +98,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Animal>>() {
+
                     override fun onSuccess(animalList: List<Animal>) {
                         loadError.value = false
                         animal.value = animalList
@@ -94,7 +117,6 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
                         }
 
                     }
-
                 }
                 )
 

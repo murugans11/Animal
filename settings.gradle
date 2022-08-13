@@ -1,16 +1,16 @@
-pluginManagement {
+/*pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
-}
-dependencyResolutionManagement {
+}*/
+/*dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
     }
-}
+}*/
 rootProject.name = "Animal"
 include ':app'

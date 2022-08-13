@@ -1,8 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
+
 
 }
 
@@ -25,15 +27,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
 
     dataBinding.enabled = true
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 
@@ -48,11 +56,17 @@ def mockitoVersion = '2.11.0'
 
 dependencies {
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+   // compileOnly 'com.github.pengrad:jdk9-deps:1.0'
+    compileOnly 'com.github.pengrad:jdk9-deps:1.0'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
 
 
     // Kotlin
@@ -83,16 +97,20 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.0'
 
     //design & palette
-    implementation "com.android.support:design:$supportVersion"
+    //implementation "com.android.support:design:$supportVersion"
     implementation "com.android.support:palette-v7:$supportVersion"
 
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
+    // Dagger
     implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.android.support:support-annotations:28.0.0'
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+   /* implementation "com.google.dagger:dagger:$daggerVersion"
+      kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"*/
+
 
     testImplementation "org.mockito:mockito-inline:$mockitoVersion"
     testImplementation "android.arch.core:core-testing:1.1.1"
